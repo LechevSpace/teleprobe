@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 
-use probe_rs::probe::DebugProbeSelector;
 use serde::{Deserialize, Serialize};
+
+use crate::api::DebugProbeSelectorShim;
 
 fn default_default_timeout() -> u64 {
     10
@@ -59,7 +60,7 @@ pub struct TokenAuth {
 pub struct Target {
     pub name: String,
     pub chip: String,
-    pub probe: DebugProbeSelector,
+    pub probe: DebugProbeSelectorShim,
     #[serde(default)]
     pub connect_under_reset: bool,
     #[serde(default)]

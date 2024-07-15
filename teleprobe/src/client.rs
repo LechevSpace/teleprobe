@@ -345,7 +345,9 @@ async fn list_targets(creds: &Credentials) -> anyhow::Result<()> {
         println!("{:20} {:14} {:6}", "name", "chip", "up");
 
         let text = res.text().await?;
-        let targets: api::TargetList = serde_json::from_str(&text)?;
+        let targets: api::TargetList = serde_json::from_str(&text)
+            .context("Target list failed to deserialize")
+            .inspect_err(|err| error!("{err}\nJSON:{text}"))?;
         let targets: Vec<String> = targets
             .targets
             .iter()

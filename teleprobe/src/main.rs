@@ -67,7 +67,7 @@ async fn async_main() -> anyhow::Result<()> {
                 crate::run::run(&mut sess, &elf, opts)
             }
         },
-        Cli::Server { port } => crate::server::serve(port).await,
+        Cli::Server { port } => crate::server::serve(port, None).await,
         Cli::Client(cmd) => client::main(cmd).await,
     }
 }

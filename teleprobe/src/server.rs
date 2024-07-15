@@ -4,7 +4,7 @@ use std::fs;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 
-use anyhow::{anyhow, bail};
+use anyhow::bail;
 use bytes::Bytes;
 use log::{error, info};
 use parking_lot::Mutex;
@@ -179,7 +179,7 @@ async fn handle_run(name: String, args: RunArgs, elf: Bytes, cx: Arc<Mutex<Conte
     let probe = probe::Opts {
         chip: target.chip.clone(),
         connect_under_reset: target.connect_under_reset,
-        probe: Some(target.probe.clone()),
+        probe: Some(target.probe.0.clone()),
         speed: target.speed,
         power_reset: target.power_reset,
         cycle_delay_seconds: target.cycle_delay_seconds,
@@ -281,9 +281,16 @@ struct Context {
     target_locks: HashMap<String, Arc<AsyncMutex<()>>>,
 }
 
-pub async fn serve(port: u16) -> anyhow::Result<()> {
-    let config = fs::read("config.yaml")?;
-    let config: Config = serde_yaml::from_slice(&config)?;
+pub async fn serve(port: u16, config: Option<Config>) -> anyhow::Result<()> {
+    let config = match config {
+        None => {
+            let config = fs::read("config.yaml")?;
+
+            let config: Config = serde_yaml::from_slice(&config)?;
+            config
+        }
+        Some(c) => c,
+    };
 
     // TODO support none or multiple oidc issuers.
     let oidc_client = match config.auths.iter().find_map(|a| match a {
