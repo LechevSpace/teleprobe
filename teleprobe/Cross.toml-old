@@ -1,0 +1,50 @@
+# # Custom image
+# [target.aarch64-unknown-linux-gnu]
+# # image = "elpiel/raspberrypi-os-cross:bookworm"
+# # image = "dtcooper/raspberrypi-os:bookworm"
+# pre-build = [
+#     "dpkg --add-architecture $CROSS_DEB_ARCH",
+#     "apt update",
+#     "apt upgrade -y",
+#     # "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+
+#     # probe-rs with openssl
+#     "wget https://www.openssl.org/source/openssl-1.1.1w.tar.gz",
+#     "sudo tar xfvz ~/Downloads/openssl-1.1.1w.tar.gz --directory /opt/openssl",
+#     "export LD_LIBRARY_PATH=/opt/openssl/lib",
+#     "cd /opt/openssl/openssl-1.1.1w",
+
+#     "sudo ./config --prefix=/opt/openssl --openssldir=/opt/openssl/ssl",
+
+#     "sudo make",
+
+#     # sudo make test
+
+#     "sudo make install",
+#     # "apt install -y pkg-config libusb-1.0-0-dev:$CROSS_DEB_ARCH libftdi1-dev:$CROSS_DEB_ARCH libudev-dev:$CROSS_DEB_ARCH libssl-dev:$CROSS_DEB_ARCH",
+# ]
+
+# Default image - libssl differes...
+[target.aarch64-unknown-linux-gnu]
+pre-build = [
+    "dpkg --add-architecture $CROSS_DEB_ARCH",
+    "apt update",
+    "apt upgrade -y",
+    # openssl
+    "apt install --assume-yes libssl-dev:$CROSS_DEB_ARCH libssl1.1:$CROSS_DEB_ARCH",
+    # probe-rs
+    "apt install -y pkg-config libusb-1.0-0-dev:$CROSS_DEB_ARCH libftdi1-dev:$CROSS_DEB_ARCH libudev-dev:$CROSS_DEB_ARCH libssl-dev:$CROSS_DEB_ARCH",
+    # libssl-dev libusb-1.0-0-dev libftdi1-dev libudev-dev
+]
+
+# Different target
+[target.armv7-unknown-linux-gnueabihf]
+# image = "dtcooper/raspberrypi-os:bookworm"
+pre-build = [
+    "dpkg --add-architecture $CROSS_DEB_ARCH",
+    "apt update",
+    "apt upgrade -y",
+    "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+    # probe-rs with openssl
+    "apt install -y pkg-config libusb-1.0-0-dev:$CROSS_DEB_ARCH libftdi1-dev:$CROSS_DEB_ARCH libudev-dev:$CROSS_DEB_ARCH libssl-dev:$CROSS_DEB_ARCH",
+]

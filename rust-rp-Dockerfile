@@ -1,0 +1,13 @@
+# Force the usage of arm64 even if we are building for `linux/amd64`
+FROM --platform=linux/arm64 dtcooper/raspberrypi-os:bookworm
+
+RUN apt update && apt install -y curl git gcc pkg-config libssl-dev libssl1.1 \
+    libusb-1.0-0-dev libftdi1-dev libudev-dev
+# docker run --platform linux/arm64 -it --rm dtcooper/raspberrypi-os:bookworm
+
+# Get Rust; NOTE: using sh for better compatibility with other base images
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+# RUN echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
+# Add .cargo/bin to PATH
+ENV PATH="/root/.cargo/bin:${PATH}"

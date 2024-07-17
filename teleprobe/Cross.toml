@@ -1,0 +1,34 @@
+# cross build --target ${TARGET[i]} --release
+# TARGET is "aarch64-unknown-linux-gnu"
+
+# Raspberry Pi 3 with Raspbian OS 64-bit
+[build.env]
+passthrough = ["RUST_BACKTRACE", "RUST_LOG", "TRAVIS"]
+
+# Raspberry Pi 3 with Raspbian OS 64-bit
+[target.aarch64-unknown-linux-gnu]
+image = "elpiel/raspberrypi-os-cross:bookworm"
+
+env.volumes = ["BUILD_DIR"]
+
+# `docker run --platform linux/arm64 -it --rm dtcooper/raspberrypi-os:bookworm`
+# pre-build = [
+# "apt update && apt install -y curl git gcc pkg-config libssl-dev libssl1.1 libusb-1.0-0-dev libftdi1-dev libudev-dev",
+
+# # Get Rust; NOTE: using sh for better compatibility with other base images
+# "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y",
+
+# # RUN echo 'source $HOME/.cargo/env' >> $HOME/.bashrc
+# # Add .cargo/bin to PATH
+# # TODO: Fix this
+# "export PATH=\"/root/.cargo/bin:${PATH}\"",
+# "dpkg --add-architecture $CROSS_DEB_ARCH",
+# "apt-get update && apt-get install --assume-yes libssl-dev:$CROSS_DEB_ARCH",
+# ]
+
+[target.x86_64-unknown-linux-gnu]
+pre-build = [
+    "dpkg --add-architecture $CROSS_DEB_ARCH",
+    "apt-get update && apt-get install --assume-yes libssl-dev:$CROSS_DEB_ARCH",
+]
+# image = "elpiel/raspberrypi-os-cross:bookworm"
